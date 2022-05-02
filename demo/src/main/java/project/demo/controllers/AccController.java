@@ -3,7 +3,9 @@ package project.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import project.demo.Entetys.Account;
 import project.demo.Entetys.Item;
+import project.demo.repo.AccountRepository;
 import project.demo.repo.ItemRepository;
 
 import java.util.ArrayList;
@@ -12,10 +14,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/kurs")
 @CrossOrigin
-public class BlogController {
+public class AccController {
 
     @Autowired
-    private ItemRepository itemRepository;
+    private AccountRepository accountRepository;
 
     /*@GetMapping("/items")
     public String items(Model model) {
@@ -24,10 +26,10 @@ public class BlogController {
         return "items";
     }*/
 
-    @GetMapping("/items")
-    public Iterable<Item> items() {
-        Iterable<Item> items = itemRepository.findAll();
-        return items;
+    @GetMapping("/acc")
+    public Iterable<Account> accounts() {
+        Iterable<Account> accounts = accountRepository.findAll();
+        return accounts;
     }
 
     @GetMapping("/additem")
