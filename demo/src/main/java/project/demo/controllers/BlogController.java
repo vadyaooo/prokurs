@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/kurs")
-@CrossOrigin
 public class BlogController {
 
     @Autowired
@@ -30,10 +29,7 @@ public class BlogController {
         return items;
     }
 
-    @GetMapping("/additem")
-    public String additem(Model model) {
-        return "additem";
-    }
+
 
     @GetMapping("/error")
     public String error(String text, Model model) {
@@ -42,7 +38,8 @@ public class BlogController {
     }
 
 
-    @PostMapping("/additem")
+    @CrossOrigin
+    @PostMapping("/")
     public String additemPost(@RequestBody Item item){
         itemRepository.save(item);
         return "new item is added";

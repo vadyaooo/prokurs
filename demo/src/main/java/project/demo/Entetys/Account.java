@@ -1,11 +1,10 @@
 package project.demo.Entetys;
 
-import javax.persistence.Table;
+import project.demo.Consts.Role;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name="accounts")
@@ -14,20 +13,36 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String UserName, UserPass, Phone, adress, FirstName, SecondName, NamepoBatke;
+    @Column(name = "user_name")
+    private String username;
+
+    private String user_pass, Phone, adress, FirstName, SecondName, NamepoBatke;
 
     public Account() {
     }
 
-    public Account(int id, String userName, String userPass, String phone, String adress, String firstName, String secondName, String namepoBatke) {
-        this.id = id;
-        UserName = userName;
-        UserPass = userPass;
+    public Account(String username, String userpass, String phone, String adress, String firstName, String secondName, String namepoBatke) {
+
+        this.username = username;
+        user_pass = userpass;
         Phone = phone;
         this.adress = adress;
         FirstName = firstName;
         SecondName = secondName;
         NamepoBatke = namepoBatke;
+    }
+
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "USER_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public int getId() {
@@ -38,20 +53,20 @@ public class Account {
         this.id = id;
     }
 
-    public String getUserName() {
-        return UserName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        UserName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getUserPass() {
-        return UserPass;
+    public String getUser_pass() {
+        return user_pass;
     }
 
-    public void setUserPass(String userPass) {
-        UserPass = userPass;
+    public void setUser_pass(String user_pass) {
+        this.user_pass = user_pass;
     }
 
     public String getPhone() {

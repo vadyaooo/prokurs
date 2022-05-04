@@ -6,4 +6,5 @@ import project.demo.Entetys.Account;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
+    Account findByUsername(String username);
 }

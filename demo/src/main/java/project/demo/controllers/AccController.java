@@ -4,114 +4,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import project.demo.Entetys.Account;
-import project.demo.Entetys.Item;
 import project.demo.repo.AccountRepository;
-import project.demo.repo.ItemRepository;
-
-import java.util.ArrayList;
-import java.util.Optional;
+import project.demo.warkclass.Accounte;
 
 @RestController
-@RequestMapping("/kurs")
+@RequestMapping("/auth")
 @CrossOrigin
 public class AccController {
 
     @Autowired
     private AccountRepository accountRepository;
 
-    /*@GetMapping("/items")
-    public String items(Model model) {
-        Iterable<Item> items = itemRepository.findAll();
-        model.addAttribute("items", items);
-        return "items";
-    }*/
-
-    @GetMapping("/acc")
-    public Iterable<Account> accounts() {
-        Iterable<Account> accounts = accountRepository.findAll();
-        return accounts;
-    }
-
-    @GetMapping("/additem")
-    public String additem(Model model) {
-        return "additem";
-    }
-
-    @GetMapping("/error")
-    public String error(String text, Model model) {
-        model.addAttribute("texterror", text);
-        return "error";
-    }
-
-
-    @PostMapping("/additem")
-    public String additemPost(@RequestBody Item item){
-        itemRepository.save(item);
-        return "new item is added";
-    }
-    /*@PostMapping("/additem")
-    public String additemPost(@RequestParam String marka, @RequestParam String fullname,@RequestParam Integer howmany,Model model){
-        Item item = new Item(marka, fullname, howmany);
-        if(!ifhaveMarkaAndFullnameOnDataBase(marka, fullname)) {
-            error("Данная модель Введеной марки уже существует в базе", model);
-            return "error";
+    @PostMapping("/")
+    public String accounter(@RequestBody Accounte account) {
+        Account accounts = accountRepository.findByUsername(account.getUser_name());
+        Accounte accounte = new Accounte(null, null);
+        if(accounts != null){
+            accounte.setUser_name(accounts.getUsername());
+            accounte.setUser_pass(accounts.getRoles().toString());
+            if(accounte.getUser_pass().equals("[ADMIN]"))
+                return "ADMIN";
+            if(accounte.getUser_pass().equals("[USER]"))
+                return "USER";
         }
-        itemRepository.save(item);
-        return "redirect:/";
-    }*/
+        return "ERROR";
+    }
 
-    public boolean ifhaveMarkaAndFullnameOnDataBase(String marka, String fullname){
-        Iterable<Item> iterable = itemRepository.findAll();
-        for (Item item : iterable) {
-            String g = item.getFullname();
-            if (item.getMarka().equals(marka) & item.getFullname().equals(fullname))
-                return false;
+    @PostMapping("/registration")
+    public String registrationOfAccount(@RequestBody Account account){
+        Account accounts = accountRepository.findByUsername(account.getUsername());
+        if(accounts == null) {
+            accountRepository.save(account);
+            return "Регистрация пользователя прошла успешно!";
         }
-        return true;
-    }
-
-    @GetMapping("/items/{id}")
-    public String itemShow(@PathVariable(value = "id") int id, Model model) {
-        if(!itemRepository.existsById(id)){
-            return "redirect:/items";
-        }
-
-        Optional<Item> item = itemRepository.findById(id);
-        ArrayList<Item> res = new ArrayList<>();
-        item.ifPresent(res::add);
-        model.addAttribute("items", res);
-        return "item-show";
-    }
-
-    @GetMapping("/items/{id}/edit")
-    public String itemEdit(@PathVariable(value = "id") int id, Model model) {
-        if(!itemRepository.existsById(id)){
-            return "redirect:/items";
-        }
-
-        Optional<Item> item = itemRepository.findById(id);
-        ArrayList<Item> res = new ArrayList<>();
-        item.ifPresent(res::add);
-        model.addAttribute("items", res);
-        return "item-edit";
+        return "Пользователь с таким именем уже существует!";
     }
 
 
-    @PostMapping("/items/{id}/edit")
-    public String edititemPost(@PathVariable(value = "id") int id, @RequestParam String marka, @RequestParam String fullname,@RequestParam Integer howmany,Model model){
-        Item item = itemRepository.findById(id).orElseThrow();
-        item.setMarka(marka);
-        item.setFullname(fullname);
-        item.setHowmany(howmany);
-        itemRepository.save(item);
-        return "redirect:/items";
-    }
 
-    @PostMapping("/items/{id}/remove")
-    public String removeitemPost(@PathVariable(value = "id") int id,Model model){
-        Item item = itemRepository.findById(id).orElseThrow();
-        itemRepository.delete(item);
-        return "redirect:/items";
-    }
+
 
 }
