@@ -16,7 +16,7 @@ public class Account {
     @Column(name = "user_name")
     private String username;
 
-    private String user_pass, Phone, adress, FirstName, SecondName, NamepoBatke;
+    private String user_pass, phone, adress, first_name, second_name, namepo_batke;
 
     public Account() {
     }
@@ -25,11 +25,11 @@ public class Account {
 
         this.username = username;
         user_pass = userpass;
-        Phone = phone;
+        phone = phone;
         this.adress = adress;
-        FirstName = firstName;
-        SecondName = secondName;
-        NamepoBatke = namepoBatke;
+        first_name = firstName;
+        second_name = secondName;
+        namepo_batke = namepoBatke;
     }
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -70,11 +70,11 @@ public class Account {
     }
 
     public String getPhone() {
-        return Phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
-        Phone = phone;
+        this.phone = phone;
     }
 
     public String getAdress() {
@@ -85,27 +85,27 @@ public class Account {
         this.adress = adress;
     }
 
-    public String getFirstName() {
-        return FirstName;
+    public String getFirst_name() {
+        return first_name;
     }
 
-    public void setFirstName(String firstName) {
-        FirstName = firstName;
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
     }
 
-    public String getSecondName() {
-        return SecondName;
+    public String getSecond_name() {
+        return second_name;
     }
 
-    public void setSecondName(String secondName) {
-        SecondName = secondName;
+    public void setSecond_name(String second_name) {
+        this.second_name = second_name;
     }
 
-    public String getNamepoBatke() {
-        return NamepoBatke;
+    public String getNamepo_batke() {
+        return namepo_batke;
     }
 
-    public void setNamepoBatke(String namepoBatke) {
-        NamepoBatke = namepoBatke;
+    public void setNamepo_batke(String namepo_batke) {
+        this.namepo_batke = namepo_batke;
     }
 }

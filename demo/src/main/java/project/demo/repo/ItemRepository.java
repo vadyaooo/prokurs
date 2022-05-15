@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import project.demo.Entetys.Item;
 
 @Repository
-public interface ItemRepository extends CrudRepository<Item, Integer> {
+public interface ItemRepository extends JpaRepository<Item, Integer> {
 }

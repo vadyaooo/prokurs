@@ -10,9 +10,12 @@ public class Historyedit {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "imeiitem_id")
+    @JoinColumn(name = "imeiitemid")
     private Imeiitem imeiitem;
 
+    @ManyToOne
+    @JoinColumn(name = "itemid")
+    private Item item;
 
     String dataofedit, nameuserofedit, typeofedit;
 
@@ -32,6 +35,14 @@ public class Historyedit {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public Imeiitem getImeiitem() {

@@ -9,11 +9,9 @@ import project.demo.Entetys.Item;
 import project.demo.repo.HistoryeditRepository;
 import project.demo.repo.ImeiitemRepository;
 import project.demo.repo.ItemRepository;
+import project.demo.serverent.historymodel;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static project.demo.controllers.AccController.UserImya;
 
@@ -35,12 +33,125 @@ public class BlogController {
     private Item idonetovarforadd;
 
     boolean dobavorno;
-    /*@GetMapping("/items")
-    public String items(Model model) {
-        Iterable<Item> items = itemRepository.findAll();
-        model.addAttribute("items", items);
-        return "items";
-    }*/
+
+    @PostMapping("/alltovarysort")
+    public Iterable<Imeiitem> alltovarysort(@RequestBody Imeiitem imeiitem){
+        Iterable<Imeiitem> imeiitemIterable = imeiitemRepository.findByMarkaContainingOrSerialnumberContainingOrFullnameContainingAndNalichiye(
+                imeiitem.getMarka(), imeiitem.getMarka(), imeiitem.getMarka(), true
+        );
+        return imeiitemIterable;
+    }
+
+    @GetMapping("/alltovary")
+    public Iterable<Imeiitem> alltovary() {
+        Iterable<Imeiitem> items = imeiitemRepository.findByNalichiye(true);
+        return items;
+    }
+
+    @GetMapping("/allhistory")
+    public Iterable<Historyedit> allhistory() {
+        Iterable<Historyedit> historyeditIterable = historyeditRepository.findAll();
+        return historyeditIterable;
+    }
+
+    @PostMapping("/allhistorysort")
+    public Iterable<Historyedit> allhistorysort(@RequestBody Historyedit historyedit){
+        Iterable<Historyedit> h1 = historyeditRepository.findByImeiitem_SerialnumberContainingOrImeiitem_MarkaContainingOrImeiitem_FullnameContaining(
+                historyedit.getTypeofedit(), historyedit.getTypeofedit(), historyedit.getTypeofedit()
+        );
+        return h1;
+    }
+
+
+    @PostMapping("/deletemodel")
+    public String deletemodel(@RequestBody Item item){
+        Item i1 = itemRepository.findById(item.getId()).orElseThrow();
+
+        itemRepository.delete(i1);
+        return "1.Модель успешно удалена";
+    }
+
+    @PostMapping("/edititem")
+    public String edititem(@RequestBody Imeiitem imeiitem){
+        Imeiitem i2 = imeiitemRepository.findById(imeiitem.getId()).orElseThrow();
+        i2 = imeiitem;Date currentDate = new Date ();
+        Historyedit historyedit = new Historyedit(currentDate.toString(), UserImya, "Редактирование товара");
+        historyedit.setImeiitem(imeiitem);
+        historyedit.setItem(i2.getItem());
+        historyeditRepository.save(historyedit);
+        imeiitemRepository.save(i2);
+        return "1.Товар успешно изменен";
+    }
+
+
+    @PostMapping("/editmodel")
+    public String editmodel(@RequestBody Item item){
+        Item i1 = itemRepository.findById(item.getId()).orElseThrow();
+        i1 = item;
+        i1.setMarka(item.getMarka());
+        i1.setHowmany(item.getHowmany());
+        i1.setDate(item.getDate());
+        i1.setFullname(item.getFullname());
+        i1.setDetail(item.getDetail());
+        i1.setImageurl(item.getImageurl());
+        i1.setTypetech(item.getTypetech());
+        itemRepository.save(i1);
+        return "1.Модель успешно изменена";
+    }
+
+    @PostMapping("/deleteitemwithhistory")
+    public String deleteitemwithhistory(@RequestBody Imeiitem imeiitem){
+        Imeiitem imeiitem1 = imeiitemRepository.findById(imeiitem.getId()).orElseThrow();
+        Date currentDate = new Date ();
+        Historyedit historyedit = new Historyedit(currentDate.toString(), UserImya, "Удаление из базы");
+        historyedit.setImeiitem(imeiitem);
+        historyedit.setItem(imeiitem1.getItem());
+        imeiitemRepository.delete(imeiitem);
+        historyeditRepository.save(historyedit);
+        return "1.Единица товара успешно удалена!";
+    }
+
+
+    @PostMapping("/deleteelementhistory")
+    public String deleteelementhistory(@RequestBody Historyedit item){
+        Historyedit historyedit = historyeditRepository.findById(item.getId()).orElseThrow();
+        historyeditRepository.delete(historyedit);
+        return "1. Запись из истории успешно удалена";
+    }
+
+    @PostMapping("/modelhistoryparam")
+    public List<Historyedit>  modelhistoryparam(@RequestBody Item item) {
+        Item model = itemRepository.getById(item.getId());
+        Iterable<Imeiitem> tovars = imeiitemRepository.findDistinctByItem_Id(model.getId());
+        Iterator<Imeiitem> imeiitemIterator = tovars.iterator();
+
+
+        List<Historyedit> historyeditIterable = historyeditRepository.findByImeiitem_SerialnumberStartingWithAndItem_Id(item.getMarka(),
+                item.getId());
+        return historyeditIterable;
+    }
+
+
+    @PostMapping("/modelitemhistory")
+    public List<Historyedit>  modelitem(@RequestBody Imeiitem item) {
+        Item model = itemRepository.getById(item.getId());
+
+
+        List<Historyedit> historyeditIterable = historyeditRepository.findDistinctByImeiitem_Id(item.getId());
+        return historyeditIterable;
+    }
+
+
+    @PostMapping("/modelhistory")
+    public List<Historyedit>  modelhistory(@RequestBody Item item) {
+        Item model = itemRepository.getById(item.getId());
+        Iterable<Imeiitem> tovars = imeiitemRepository.findDistinctByItem_Id(model.getId());
+        Iterator<Imeiitem> imeiitemIterator = tovars.iterator();
+
+
+        List<Historyedit> historyeditIterable = historyeditRepository.findDistinctByItem_Id(item.getId());
+        return historyeditIterable;
+    }
 
     @PostMapping("/addonemodel")
     public String addonetovar(@RequestBody Imeiitem imeiitem){
@@ -59,6 +170,7 @@ public class BlogController {
         Date currentDate = new Date ();
         Historyedit historyedit = new Historyedit(currentDate.toString(), UserImya, "Добавление в базу");
         historyedit.setImeiitem(imeiitem);
+        historyedit.setItem(imeiitem.getItem());
         imeiitem.setNalichiye(true);
         imeiitemRepository.save(imeiitem);
         historyeditRepository.save(historyedit);
@@ -106,6 +218,7 @@ public class BlogController {
         Date currentDate = new Date ();
         Historyedit historyedit = new Historyedit(currentDate.toString(), UserImya, "Реализация товара");
         historyedit.setImeiitem(imeiitem);
+        historyedit.setItem(imeiitem.getItem());
         historyeditRepository.save(historyedit);
         return "1.Единица товара успешно добавлена в раздел реализованных товаров!";
     }
@@ -156,20 +269,6 @@ public class BlogController {
         return true;
     }
 
-    /*@PostMapping("/items/ider")
-    public Iterable<Imeiitem> itemShow(@RequestBody Imeiitem id) {
-        Iterable<Imeiitem> iterable = imeiitemRepository.findAll();
-        Iterable<Imeiitem> imeiitemIterable;
-        for (Imeiitem item : iterable) {
-            if (item.getItem().getId() == id.getId() && item.isNalichiye()) {
-
-            }
-            else
-                imeiitemIterable.iterator().remove();
-        }
-        return iterable;
-
-    }*/
 
     @PostMapping("/items/ider")
     public List<Imeiitem> itemShow(@RequestBody Imeiitem id) {
